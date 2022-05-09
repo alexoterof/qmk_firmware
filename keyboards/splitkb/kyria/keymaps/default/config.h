@@ -24,6 +24,9 @@
 #    define RGBLIGHT_LIMIT_VAL 150
 #endif
 
+//mouse configuration
+#define MK_COMBINED
+
 // Lets you roll mod-tap keys
 #define IGNORE_MOD_TAP_INTERRUPT
 

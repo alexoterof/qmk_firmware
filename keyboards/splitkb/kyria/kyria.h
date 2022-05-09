@@ -16,13 +16,7 @@
 #pragma once
 
 #include "quantum.h"
-
-#if defined(KEYBOARD_splitkb_kyria_rev1)
-#    include "rev1.h"
-#endif
-#if defined(KEYBOARD_splitkb_kyria_rev2)
-#    include "rev2.h"
-#endif
+#include "rev2.h"
 
 /* This a shortcut to help you visually see your layout.
  *

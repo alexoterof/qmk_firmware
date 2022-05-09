@@ -41,25 +41,25 @@ bool oled_task_kb(void) {
         oled_write_P(PSTR("rev2\n\n"), false);
 #endif
         // Host Keyboard Layer Status
-        oled_write_P(PSTR("Layer: "), false);
+        oled_write_P(PSTR("Layer -> "), false);
         switch (get_highest_layer(layer_state | default_layer_state)) {
             case 0:
-                oled_write_P(PSTR("QWERTY\n"), false);
+                oled_write_P(PSTR("Escritura\n"), false);
+                break;
+            case 1:
+                oled_write_P(PSTR("Mov\n"), false);
+                break;
+            case 2:
+                oled_write_P(PSTR("Simbolos\n"), false);
                 break;
             case 3:
-                oled_write_P(PSTR("Nav\n"), false);
+                oled_write_P(PSTR("Funcion\n"), false);
                 break;
             case 4:
-                oled_write_P(PSTR("Sym\n"), false);
-                break;
-            case 5:
-                oled_write_P(PSTR("Function\n"), false);
-                break;
-            case 6:
                 oled_write_P(PSTR("Meta\n"), false);
                 break;
             default:
-                oled_write_P(PSTR("Undefined\n"), false);
+                oled_write_P(PSTR("Desconocina\n"), false);
         }
 
         // Host Keyboard LED Status
@@ -83,30 +83,5 @@ bool oled_task_kb(void) {
         oled_write_raw_P(kyria_logo, sizeof(kyria_logo));
     }
     return false;
-}
-#endif
-
-#ifdef ENCODER_ENABLE
-bool encoder_update_kb(uint8_t index, bool clockwise) {
-    if (!encoder_update_user(index, clockwise)) {
-        return false;
-    }
-
-    if (index == 0) {
-        // Volume control
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
-        }
-    } else if (index == 1) {
-        // Page up/Page down
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
-        }
-    }
-    return true;
 }
 #endif

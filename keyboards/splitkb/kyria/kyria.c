@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "kyria.h"
-#include <unistd.h>
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
@@ -48,66 +47,29 @@ bool oled_task_kb(void) {
             default:
                 oled_write_P(PSTR("Desconocida\n"), false);
         }
+
+        //oled_write_P(PSTR("\n\n"), false);
+
+        //char wpm_str[100];
+        int wpm = get_current_wpm();
+        char wpm_str[3];
+        itoa(wpm, wpm_str, 10   );
+
+        oled_write_P(PSTR("\nWPM -> "), false);
+        oled_write(wpm_str, false);
+
         // Host Keyboard LED Status
         led_t led_usb_state = host_keyboard_led_state();
         oled_write_P(led_usb_state.caps_lock ? PSTR("\nCAPS!!!\n\n") : PSTR("\n       \n\n"), false);
     } else {
-        int timer = 0;
-        char wpm_text[5];
-        int x = 31;
-        int currwpm = 0;
-
-        //USER CONFIG PARAMS
-        float max_wpm = 110.0f; //WPM value at the top of the graph window
-        int graph_refresh_interval = 80; //in milliseconds
-        int graph_area_fill_interval = 3; //determines how dense the lines under the graph line are; lower = more dense
-        //get current WPM value
-        currwpm = get_current_wpm();
-    
-        //check if it's been long enough before refreshing graph
-        if(timer_elapsed(timer) > graph_refresh_interval){
-
-            // main calculation to plot graph line
-            x = 32 - ((currwpm / max_wpm) * 32);
-
-            //first draw actual value line
-            oled_write_pixel(1, x, true);
-
-            //then fill in area below the value line
-            for(int i = 32; i > x; i--){
-                if(i % graph_area_fill_interval == 0){
-                    oled_write_pixel(1, i, true);
-                }
-            }
-
-            //then move the entire graph one pixel to the right
-            oled_pan(false);
-
-            //refresh the timer for the next iteration
-            timer = timer_read();
-
-        }
-
-        //format current WPM value into a printable string
-        sprintf(wpm_text,"%i", currwpm);
-
-        //formatting for triple digit WPM vs double digits, then print WPM readout
-        if(currwpm >= 100){
-            oled_set_cursor(14, 3);
-            oled_write("WPM: ", false);
-            oled_set_cursor(18, 3);
-            oled_write(wpm_text, false);
-        } else if (currwpm >= 10){
-            oled_set_cursor(15, 3);
-            oled_write("WPM: ", false);
-            oled_set_cursor(19, 3);
-            oled_write(wpm_text, false);
-        } else if (currwpm > 0) {
-            oled_set_cursor(16, 3);
-            oled_write("WPM: ", false);
-            oled_set_cursor(20, 3);
-            oled_write(wpm_text, false);
-        }
+        static const char PROGMEM raw_logo[] = {
+            0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,224,224,224,224,  0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            0,  0,  0,240,240,240,241,241,241,241,  0,  0,  0,128,128,128,240,240,240,240,240,240,248,255,255,255,255,  0,  0,128,128,128,240,240,240,240,240,240,240,240,128,128,128,  0,  0,  0,  0,  0,  0,240,240,240,240,240,240,240,128,128,128,  0,  0,  0,  1,  1,  1,255,255,255,255,  0,  0,  0,240,240,240,241,241,241,241,  0,  0,  0,128,128,128,240,240,240,240,240,240,240,240,240,240,112,  0,  0,240,240,240,255,255,255,255,248,240,240,240,  0,  0,  0,  0,  0,112,240,240,240,240,240,240,240,128,128,128,  0,  0,  0,
+            0,  0,  0,  0,  0,  0,255,255,255,255,  0,  0,  0,255,255,255,255,  0,  0,  0,  0,  0,  0,255,255,255,255,  0,  0,255,255,255,255, 60, 60, 60, 60, 60, 60, 63,127, 63, 63,  0,  0,128,192,192,192,252, 60, 60, 60, 60, 60,255,255,255,255,187,  0,  0,  0,  0,  0,255,255,255,255,  0,  0,  0,  0,  0,  0,255,255,255,255,  0,  0,  0,  7,  7,  7, 63, 60, 60, 60, 60, 60,124,224,192,192,192,  0,  0,  0,  0,  0,255,255,255,255,  0,  0,  0,  0,  0,  0,192,192,192,232,124, 60, 60, 60, 60, 60,255,255,255,255,  0,  0,  0,
+            0,  0,  0,  0,  0,  0, 31, 31, 31, 31,  0,  0,  0,  3,  3,  3, 31, 30, 30, 30, 30, 30, 30, 31, 31, 31, 31,  0,  0,  1,  3,  3, 15, 30, 30, 30, 30, 30, 30, 30,  0,  0,  0,  0,  0,  1,  3,  3,  3, 31, 30, 30, 30, 30, 30, 31, 31, 31, 31, 15,  0,  0,  0,  0,  0, 31, 31, 31, 31,  0,  0,  0,  0,  0,  0, 31, 31, 31, 31,  0,  0,  0, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,  3,  3,  3,  1,  0,  0,  0,  0,  0,  1,  3,  3,  3, 30, 30, 30, 30,  0,  0,  1,  3,  3, 11, 30, 30, 30, 30, 30, 30, 31, 31, 31, 31,  0,  0,  0,
+        };
+        oled_write_P(PSTR("\n\n"), false);
+        oled_write_raw_P(raw_logo, sizeof(raw_logo));
     }
     return false;
 }

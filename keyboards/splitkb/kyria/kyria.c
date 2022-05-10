@@ -25,42 +25,60 @@ bool oled_task_kb(void) {
         return false;
     }
     if (is_keyboard_master()) {
-        oled_write_P(PSTR("Kyria de Alex\n\n"), false);
-        // Host Keyboard Layer Status
-        oled_write_P(PSTR("Capa -> "), false);
+        //Layer info
         switch (get_highest_layer(layer_state | default_layer_state)) {
             case 0:
-                oled_write_P(PSTR("QWERTY\n"), false);
+                oled_write_P(PSTR("QWERTY"), false);
                 break;
             case 1:
-                oled_write_P(PSTR("Mov\n"), false);
+                oled_write_P(PSTR("Mov   "), false);
                 break;
             case 2:
-                oled_write_P(PSTR("Simbolos\n"), false);
+                oled_write_P(PSTR("Sym   "), false);
                 break;
             case 3:
-                oled_write_P(PSTR("Funcion\n"), false);
+                oled_write_P(PSTR("FN    "), false);
                 break;
             case 4:
-                oled_write_P(PSTR("Meta\n"), false);
+                oled_write_P(PSTR("Meta  "), false);
                 break;
             default:
-                oled_write_P(PSTR("Desconocida\n"), false);
+                oled_write_P(PSTR("null  "), false);
         }
 
-        //oled_write_P(PSTR("\n\n"), false);
-
-        //char wpm_str[100];
-        int wpm = get_current_wpm();
-        char wpm_str[3];
-        itoa(wpm, wpm_str, 10   );
-
-        oled_write_P(PSTR("\nWPM -> "), false);
-        oled_write(wpm_str, false);
-
-        // Host Keyboard LED Status
+        //Caps
         led_t led_usb_state = host_keyboard_led_state();
-        oled_write_P(led_usb_state.caps_lock ? PSTR("\nCAPS!!!\n\n") : PSTR("\n       \n\n"), false);
+        oled_write_P(led_usb_state.caps_lock ? PSTR(" CAPS! ") : PSTR("       "), false);
+
+        //Graph
+        const float MAX_WPM = 150.0f; //WPM value at the top of the graph window
+        const int REFRESH_INTERVAL = 16; //in milliseconds
+        const int SCREEN_HEIGHT = 64;
+        int timer = 0;
+        char wpm_text[5];
+        int height = 5;
+        int currwpm = get_current_wpm();
+
+        //check if it's been long enough before refreshing graph
+        if(timer_elapsed(timer) > REFRESH_INTERVAL){
+            //Line height
+            height = SCREEN_HEIGHT-((currwpm / MAX_WPM) * SCREEN_HEIGHT);
+            //paint line
+            for(int i = SCREEN_HEIGHT; i >= height; i--){
+                oled_write_pixel(1, i, true);
+            }
+            //move the hole graph one pixel to the left
+            oled_pan(false);
+            //timer refresh
+            timer = timer_read();
+        }
+
+        //format current WPM value into a printable string
+        itoa(currwpm, wpm_text, 10);
+        oled_set_cursor(14, 0);
+        oled_write("WPM: ", false);
+        oled_set_cursor(18, 0);
+        oled_write(wpm_text, false);
     } else {
         static const char PROGMEM raw_logo[] = {
             0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,192,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,224,224,224,224,  0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,224,224,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

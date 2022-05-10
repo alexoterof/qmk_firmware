@@ -16,3 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config_common.h"
 
+
+//Mouse settings
+#define MOUSEKEY_TIME_TO_MAX 70
+#define MOUSEKEY_MAX_SPEED 7
+#define MOUSEKEY_WHEEL_INTERVAL 60
+

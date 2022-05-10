@@ -17,5 +17,6 @@ BACKLIGHT_ENABLE = no      # Enable keyboard backlight functionality
 AUDIO_ENABLE = no          # Audio output
 SPLIT_KEYBOARD = yes       # Split common
 LTO_ENABLE = yes
+WPM_ENABLE = yes
 
 DEFAULT_FOLDER = splitkb/kyria/rev2

@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* USB Device descriptor parameter */
 #define VENDOR_ID    0x8D1D
 #define PRODUCT_ID   0x9D9D
-#define DEVICE_VER   0x0002
+#define DEVICE_VER   0x0001
 #define MANUFACTURER splitkb
-#define PRODUCT      Kyria rev2
+#define PRODUCT      Kyria rev1
 
 /* key matrix size */
 /* Rows are doubled up */
@@ -31,34 +31,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // wiring
 #define MATRIX_ROW_PINS \
-    { F6, F7, B1, B3 }
+    { B4, E6, D7, D4 }
 #define MATRIX_COL_PINS \
-    { B2, B6, B5, B4, E6, D7, C6, D4 }
-#define MATRIX_ROW_PINS_RIGHT \
-    { D4, C6, D7, E6 }
-#define MATRIX_COL_PINS_RIGHT \
-    { B4, B5, B6, B2, B3, B1, F7, F6 }
+    { B6, B2, B3, B1, F7, F6, F5, F4 }
 #define UNUSED_PINS
 
 #define ENCODERS_PAD_A \
-    { F4 }
+    { C6 }
 #define ENCODERS_PAD_B \
-    { F5 }
+    { B5 }
 #define ENCODERS_PAD_A_RIGHT \
-    { F5 }
+    { B5 }
 #define ENCODERS_PAD_B_RIGHT \
-    { F4 }
-
-#define ENCODER_RESOLUTIONS { 2, 1 }
+    { C6 }
 
 /* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
-
-// Side detection
-// col 4 row 3 on right-hand-side
-#define SPLIT_HAND_MATRIX_GRID E6, B3 // row first because the board is col2row
-#define SPLIT_HAND_MATRIX_GRID_LOW_IS_RIGHT
-#define MATRIX_MASKED // actual mask is defined by `matrix_mask` in `rev2.c`
 
 /* define if matrix has ghost (lacks anti-ghosting diodes) */
 //#define MATRIX_HAS_GHOST
@@ -107,6 +95,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 170
 #    define RGB_DISABLE_WHEN_USB_SUSPENDED
 #endif
-
-//Fix pcb
-#define SPLIT_USB_DETECT

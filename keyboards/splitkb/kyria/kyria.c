@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "kyria.h"
+#include <string.h>
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_kb(oled_rotation_t rotation) {
@@ -26,29 +27,26 @@ bool oled_task_kb(void) {
     }
     if (is_keyboard_master()) {
         //Layer info
-        switch (get_highest_layer(layer_state | default_layer_state)) {
-            case 0:
-                oled_write_P(PSTR("QWERTY"), false);
-                break;
-            case 1:
-                oled_write_P(PSTR("Mov   "), false);
-                break;
-            case 2:
-                oled_write_P(PSTR("Sym   "), false);
-                break;
-            case 3:
-                oled_write_P(PSTR("FN    "), false);
-                break;
-            case 4:
-                oled_write_P(PSTR("Meta  "), false);
-                break;
-            default:
-                oled_write_P(PSTR("null  "), false);
-        }
+        int layer_value_size = 8;
+        char layer_names[6][layer_value_size];
+        strcpy(layer_names[0], "qwerty ");
+        strcpy(layer_names[1], "colemak");
+        strcpy(layer_names[2], "edit-m.");
+        strcpy(layer_names[3], "symbols");
+        strcpy(layer_names[4], "fun-win");
+        strcpy(layer_names[5], "kb-ctrl");
+
+        int layers_count = sizeof(layer_names)/layer_value_size;
+        int current_layer = get_highest_layer(layer_state | default_layer_state);
+
+        if(current_layer <= layers_count)
+            oled_write(layer_names[current_layer], false);
+        else
+            oled_write_P(PSTR("UNKNOWN"), false);
 
         //Caps
         led_t led_usb_state = host_keyboard_led_state();
-        oled_write_P(led_usb_state.caps_lock ? PSTR(" CAPS! ") : PSTR("       "), false);
+        oled_write_P(led_usb_state.caps_lock ? PSTR(" CAPS ") : PSTR("      "), false);
 
         //Graph
         const float MAX_WPM = 150.0f; //WPM value at the top of the graph window
